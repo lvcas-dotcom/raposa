@@ -11,12 +11,15 @@ com capa, laranja e branco, mas com mascote próprio para o Open Rabbit.
 - Criar ícone e banner consistentes, adequados ao README no GitHub.
 - Preservar as imagens já modificadas pelo mantenedor e salvar a proposta em novos arquivos.
 - Registrar ferramenta, prompts e validação visual.
+- Ajustar o banner para um formato mais baixo e largo, reduzindo o espaço vazio
+  vertical e usando a largura disponível do README.
 
 ## Fora de escopo
 
 Reprodução de símbolo de terceiros, promessa de exclusividade jurídica, mudanças
 no runtime ou alteração da visibilidade do repositório. O mantenedor autorizou
-preparar o commit e solicitou aprovação antes de sua criação e envio ao GitHub.
+o commit do mascote e seu envio ao GitHub. Posteriormente também autorizou o
+recorte exato do banner por script e a publicação desse ajuste, sem coautoria.
 
 ## Critério de aceite
 
