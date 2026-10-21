@@ -1,0 +1,31 @@
+{
+  "collected_on": "2026-10-21",
+  "rea_version": "6.7.0",
+  "files": [
+    {
+      "path": "public-pr-92.json",
+      "bytes": 1995,
+      "sha256": "bbb226f38faa6ad1a2a43308ec15c076d869b3c6c0627e223b81b2de7ec2a889"
+    },
+    {
+      "path": "rea-bundle-failure.json",
+      "bytes": 500,
+      "sha256": "dec92c137a0582e875cebb9854e4ea6dec33eb55783558d0e65c70a6c08fd1f7"
+    },
+    {
+      "path": "rea-install-lock.json",
+      "bytes": 73997,
+      "sha256": "a26b1fb2e6b2d0e2445740f483f17b5e4653d86ce058a3e60d4c4fa3774dfb8b"
+    },
+    {
+      "path": "rea-page.json",
+      "bytes": 302124,
+      "sha256": "1a96c14223a3ace564a2478acd9f0c490e99f619c63759417d070e5399b34b7f"
+    },
+    {
+      "path": "rea-static-sample.json",
+      "bytes": 593268,
+      "sha256": "3b2d0475b005dfd1bb3ae3a1efe6daf02c9a585809234fcadd4dd78411541155"
+    }
+  ]
+}

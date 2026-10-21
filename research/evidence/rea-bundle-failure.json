@@ -1,0 +1,12 @@
+{
+  "status": "failed",
+  "operation": "analyze-web-bundle",
+  "rea_version": "6.7.0",
+  "target_url": "https://docs.coderabbit.ai/overview/architecture",
+  "date": "2026-10-21",
+  "exit_code": 134,
+  "reason": "V8 heap out of memory near 4 GiB in the REA process",
+  "result": null,
+  "fallback": "One 3494-byte public script analyzed with analyze-javascript-application, 256 MiB heap, 30 s deadline",
+  "note": "Failure record written by the investigator; not a successful REA Evidence envelope"
+}

@@ -1,0 +1,7 @@
+{
+  "argv": [
+    "/caminho/absoluto/open-rabbit/bin/ollama-provider",
+    "--model",
+    "MODELO_ESCOLHIDO_PELO_OPERADOR"
+  ]
+}

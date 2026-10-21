@@ -1,0 +1,26 @@
+{
+  "kind": "public-review-observation",
+  "collected_at": "2026-10-21",
+  "source": "https://api.github.com/repos/coderabbitai/coderabbit-pr-review/pulls/92",
+  "comments_source": "https://api.github.com/repos/coderabbitai/coderabbit-pr-review/pulls/92/comments?per_page=100",
+  "url": "https://github.com/coderabbitai/coderabbit-pr-review/pull/92",
+  "title": "Preview/Opengrep",
+  "base_sha": "ef04b8d45ce0a9d3439f2db9d7e423c645a2a28a",
+  "head_sha": "0349d730a9f34013cfb1c59bbd61915f396f15e9",
+  "observed_bot": "coderabbitai[bot]",
+  "comments": [
+    {"id": 3147959735, "path": ".coderabbit.yml", "line": 6, "severity_observed": "Major", "summary": "Questiona configuração de ast-grep e expõe uma cadeia de análise com consulta web."},
+    {"id": 3147959741, "path": "opengrep/vuln_java.java", "line": 54, "severity_observed": "Minor", "summary": "Aponta possível vazamento de recurso por ausência de fechamento de stream."},
+    {"id": 3147959759, "path": "opengrep/vuln_javascript.js", "line": 13, "severity_observed": "Critical", "summary": "Aponta uso de DOM em um endpoint Node.js como possível erro em runtime."},
+    {"id": 3147959767, "path": "opengrep/vuln_javascript.js", "line": 20, "severity_observed": "Critical", "summary": "Repete a classe de uso de DOM em outro endpoint do mesmo arquivo."},
+    {"id": 3147959781, "path": "opengrep/vuln_python.py", "line": 30, "severity_observed": "Minor", "summary": "Aponta possível incompatibilidade ao converter retorno de fetchone em dict."}
+  ],
+  "all_comment_commit_ids_match_head": true,
+  "adjudicated": false,
+  "limitations": [
+    "PR de demonstração selecionada por conveniência; não representa desempenho médio.",
+    "Metadados de comentários e paráfrases; nenhum achado foi usado como gabarito.",
+    "Não foi executado CodeRabbit nem Open Rabbit sobre esta PR nesta investigação.",
+    "As severidades originais foram preservadas; não há equivalência automática com a escala do Open Rabbit."
+  ]
+}

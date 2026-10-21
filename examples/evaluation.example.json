@@ -1,0 +1,24 @@
+[
+  {
+    "ID": "exemplo-sintetico-nao-e-benchmark",
+    "Base": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "Head": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "Defeitos": ["defeito-1", "defeito-2"],
+    "Revisoes": [
+      {
+        "Revisor": "revisor-demo-a",
+        "Achados": [
+          {"ID": "a1", "Defeito": "defeito-1", "Valido": true},
+          {"ID": "a2", "Defeito": "", "Valido": false}
+        ]
+      },
+      {
+        "Revisor": "revisor-demo-b",
+        "Achados": [
+          {"ID": "b1", "Defeito": "defeito-1", "Valido": true},
+          {"ID": "b2", "Defeito": "defeito-2", "Valido": true}
+        ]
+      }
+    ]
+  }
+]
