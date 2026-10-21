@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="img/banner-open-rabbit-wide.png" alt="Banner do Open Rabbit" width="100%">
+  <img src="img/banner-open-rabbit-wide.png" alt="Banner do OpenRabbit" width="100%">
 </p>
 
 # <img src="img/icon-open-rabbit-v2.png" alt="" width="40" height="40"> Open Rabbit
