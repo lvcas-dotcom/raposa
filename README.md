@@ -1,6 +1,8 @@
-![Banner do Open Rabbit](img/banner-open-rabbit.png)
+<p align="center">
+  <img src="img/banner-open-rabbit-v2.png" alt="Banner do Open Rabbit" width="640">
+</p>
 
-# <img src="img/icon-open-rabbit.png" alt="" width="40" height="40"> Open Rabbit
+# <img src="img/icon-open-rabbit-v2.png" alt="" width="40" height="40"> Open Rabbit
 
 Revisor de código local e laboratório de avaliação, inspirado nas capacidades
 públicas do CodeRabbit. Objetivo: aproximar qualidade por evidência e medição.
