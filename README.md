@@ -2,9 +2,9 @@
   <img src="img/banner.png" alt="Banner do projeto Raposa" width="100%">
 </p>
 
-# <img src="img/logo.png" alt="" width="40" height="40"> Raposa
+🦊 Inteligência em PRs, 100% código aberto.
 
-Revisor de código local e laboratório de avaliação, inspirado nas capacidades
+Raposa é um revisor de código local e laboratório de avaliação, inspirado nas capacidades
 públicas do CodeRabbit. Objetivo: aproximar qualidade por evidência e medição.
 O estado atual é uma primeira implementação funcional, sem equivalência demonstrada.
 Projeto pessoal open source independente, preparado para hospedagem no GitHub.
