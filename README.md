@@ -96,6 +96,7 @@ O JSON contém trechos do repositório; mantenha os relatórios no ambiente auto
 ## Pesquisa e qualidade
 
 - [Evidências do REA e comportamento público](research/findings.md)
+- [Repositórios públicos úteis e técnicas aplicáveis](research/public-repositories.md)
 - [Comparação de capacidades e próximos marcos](docs/roadmap.md)
 - [Protocolo de avaliação](docs/evaluation.md)
 - [Decisões de arquitetura](docs/arquitetura/adr/0001-nucleo-go-e-adapters.md)
