@@ -1,6 +1,6 @@
 {
   "argv": [
-    "/caminho/absoluto/open-rabbit/bin/ollama-provider",
+    "/caminho/absoluto/raposa/bin/ollama-provider",
     "--model",
     "MODELO_ESCOLHIDO_PELO_OPERADOR",
     "--num-ctx",

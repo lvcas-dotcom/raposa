@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="img/banner-open-rabbit-wide.png" alt="Banner do Open Rabbit" width="100%">
+  <img src="img/banner.png" alt="Banner do projeto Raposa" width="100%">
 </p>
 
-# <img src="img/icon-open-rabbit-v2.png" alt="" width="40" height="40"> Open Rabbit
+# <img src="img/logo.png" alt="" width="40" height="40"> Raposa
 
 Revisor de código local e laboratório de avaliação, inspirado nas capacidades
 públicas do CodeRabbit. Objetivo: aproximar qualidade por evidência e medição.
@@ -15,11 +15,11 @@ Requisitos: Git, Go 1.27.1; moon 2.3.4 é opcional para executar as mesmas tasks
 As versões ficam em `.prototools`. Não há dependências Go externas.
 
 ```sh
-cd open-rabbit
+cd raposa
 proto install
 sh scripts/check.sh
 sh scripts/build.sh
-./bin/open-rabbit --help
+./bin/raposa --help
 ```
 
 Recebe dois commits de um repositório existente. Não faz checkout e não executa
@@ -27,12 +27,12 @@ os builds, testes ou hooks do alvo. O relatório identifica os SHAs completos.
 Use as referências desejadas do seu repositório:
 
 ```sh
-./bin/open-rabbit review \
+./bin/raposa review \
   --repo '/caminho/do/repositorio' \
   --base main --head minha-branch \
   --format md --output /tmp/review.md
 
-./bin/open-rabbit prepare \
+./bin/raposa prepare \
   --repo '/caminho/do/repositorio' \
   --base main --head minha-branch \
   --output /tmp/review-context.json
@@ -58,7 +58,7 @@ candidatos e tentativa de refutação.
 4. Execute:
 
 ```sh
-./bin/open-rabbit review \
+./bin/raposa review \
   --repo '/caminho/do/repositorio' \
   --base main --head minha-branch \
   --provider-config provider.local.json \
@@ -106,5 +106,5 @@ O JSON contém trechos do repositório; mantenha os relatórios no ambiente auto
 
 O projeto usa product-first, dependency rule, ports no chamador, ADRs, issues,
 notas, validação e fecho. A CI está em `.github/workflows/ci.yml`.
-Repositório: [lvcas-dotcom/open-rabbit](https://github.com/lvcas-dotcom/open-rabbit).
+Repositório: [lvcas-dotcom/raposa](https://github.com/lvcas-dotcom/raposa).
 A licença de distribuição ainda será definida pelo mantenedor.

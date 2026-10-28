@@ -2,7 +2,7 @@
 
 Comparação funcional baseada na documentação pública, sem comparação de acurácia.
 
-| Capacidade | Open Rabbit hoje | Próximo critério de aceite |
+| Capacidade | Raposa hoje | Próximo critério de aceite |
 | --- | --- | --- |
 | Contexto de repositório | snapshots e recorte auxiliar | importar contratos, callers e testes por símbolos, com evidência de recuperação |
 | Análise estática | uma regra AST Go | adapters para analisadores versionados com resultados normalizados |

@@ -1,4 +1,4 @@
-# Open Rabbit
+# Raposa
 
 Fonte normativa para agentes deste projeto pessoal open source, com destino GitHub.
 
@@ -6,7 +6,7 @@ Fonte normativa para agentes deste projeto pessoal open source, com destino GitH
   Brainstorm e aceite precedem a issue quando o escopo ainda não foi definido.
 - Branch `<tipo>/<N>-<slug>`; notas antes da implementação; done com comandos e limites.
 - Um agente por padrão. Modelo e esforço são escolhas do usuário.
-- Código de produto em `projects/open-rabbit/`; sem libs compartilhadas com um consumidor.
+- Código de produto em `projects/raposa/`; sem libs compartilhadas com um consumidor.
 - Dependências: adapters → application → domain. Ports pertencem ao application.
   Domain usa apenas stdlib, sem infraestrutura nem tags de serialização.
 - Ferramental em inglês; domínio, cenários, docs e erros em pt-BR.

@@ -1,6 +1,6 @@
 > Demonstração sintética da baseline estática, sem modelo ou comparação de qualidade.
 
-# Open Rabbit
+# Raposa
 
 Base: `26c03bb82b389239f6af5a21e8459d8a825eb9f2`
 Head: `61541090d4b1774863b997e962eab691ffe6f0cc`
