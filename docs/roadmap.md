@@ -28,3 +28,15 @@ Comparação funcional baseada na documentação pública, sem comparação de a
 Cada marco vira issue com aceite verificável, notas antes de implementar e done
 com evidências. A issue #1 entrega o laboratório inicial; não representa conclusão
 do produto completo ou da meta de qualidade.
+
+## Referências que orientam o próximo recorte
+
+[Fontes públicas úteis](../research/public-repositories.md) registra o exemplo de
+contexto além do diff, regras estáticas e integrações, separando fatos e propostas.
+O recorte prioritário é recuperar um nível de callers/callees por símbolo em Go,
+com procedência e limites explícitos. Seu aceite inclui consumidores entre pacotes,
+casos seguros, nomes ambíguos e budgets de contexto. Não está implementado.
+
+A adoção depende da comparação com a recuperação atual nos mesmos SHAs, mantendo
+provedor/configuração iguais e adjudicação humana. Ferramentas externas entram por
+adapter e por classe validada; nenhuma fonte pública substitui essa medição.

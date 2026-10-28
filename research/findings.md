@@ -70,6 +70,14 @@ adjudicado, nem a amostra foi usada para medir qualidade do Open Rabbit.
 São hipóteses de engenharia, não conclusões experimentais desta execução.
 O [plano de avaliação](../docs/evaluation.md) define como medi-las.
 
+## Referências públicas para evolução
+
+A análise dos repositórios e as propostas aplicáveis estão em
+[fontes públicas úteis para o Open Rabbit](public-repositories.md), com o commit
+da demonstração examinada, limitações e diferenças para a implementação local.
+Essa referência é um plano de estudo e evolução; não acrescenta funcionalidades
+ao revisor nem comprova a arquitetura interna do serviço comercial.
+
 ## Reprodução
 
 Use Chrome com perfil temporário e CDP loopback, sem sessão pessoal. Descubra o
