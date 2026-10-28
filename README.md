@@ -53,7 +53,8 @@ candidatos e tentativa de refutação.
 
 1. Tenha Ollama rodando e um modelo escolhido disponível nele.
 2. Copie `examples/provider.example.json` para `provider.local.json`.
-3. Substitua o caminho absoluto e o modelo no arquivo.
+3. Substitua o caminho absoluto, o modelo e a janela de contexto (`--num-ctx`,
+   em tokens) no arquivo. Prompt maior que a janela encerra com erro, sem cortar.
 4. Execute:
 
 ```sh

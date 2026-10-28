@@ -89,21 +89,40 @@ func (r Repository) blob(ctx context.Context, sha, p string) (string, bool, erro
 	return string(b), true, nil
 }
 
-var hunk = regexp.MustCompile(`(?m)^@@ -[0-9]+(?:,[0-9]+)? \+([0-9]+)(?:,([0-9]+))? @@`)
+var hunkHeader = regexp.MustCompile(`^@@ -[0-9]+(?:,[0-9]+)? \+([0-9]+)(?:,[0-9]+)? @@`)
 
-func intervals(diff []byte) []domain.Intervalo {
+func parseHunks(diff []byte) ([]domain.Intervalo, string) {
 	ranges := []domain.Intervalo{}
-	for _, m := range hunk.FindAllSubmatch(diff, -1) {
-		start, _ := strconv.Atoi(string(m[1]))
-		count := 1
-		if len(m[2]) > 0 {
-			count, _ = strconv.Atoi(string(m[2]))
+	var numbered strings.Builder
+	line := 0
+	inHunk := false
+	for _, text := range strings.Split(string(diff), "\n") {
+		if header := hunkHeader.FindStringSubmatch(text); header != nil {
+			line, _ = strconv.Atoi(header[1])
+			inHunk = true
+			numbered.WriteString(text + "\n")
+			continue
 		}
-		if count > 0 {
-			ranges = append(ranges, domain.Intervalo{Inicio: start, Fim: start + count - 1})
+		if !inHunk || text == "" {
+			continue
+		}
+		switch text[0] {
+		case ' ':
+			fmt.Fprintf(&numbered, "%6d   %s\n", line, text[1:])
+			line++
+		case '+':
+			fmt.Fprintf(&numbered, "%6d + %s\n", line, text[1:])
+			if last := len(ranges) - 1; last >= 0 && ranges[last].Fim == line-1 {
+				ranges[last].Fim = line
+			} else {
+				ranges = append(ranges, domain.Intervalo{Inicio: line, Fim: line})
+			}
+			line++
+		case '-':
+			fmt.Fprintf(&numbered, "%6s - %s\n", "", text[1:])
 		}
 	}
-	return ranges
+	return ranges, numbered.String()
 }
 
 func (r Repository) Snapshot(ctx context.Context, base, head string) (domain.Mudanca, error) {
@@ -173,15 +192,16 @@ func (r Repository) Snapshot(ctx context.Context, base, head string) (domain.Mud
 				m.Limitacoes = append(m.Limitacoes, "Base indisponível por limite: "+old)
 			}
 		}
-		total += len(before) + len(after)
-		if total > maxContext {
-			return m, fmt.Errorf("snapshot alterado excede 2 MiB; divida a revisão")
-		}
-		diff, err := r.run(ctx, "diff", "--no-ext-diff", "--no-textconv", "--no-color", "--unified=0", b, h, "--", old, p)
+		diff, err := r.run(ctx, "diff", "--no-ext-diff", "--no-textconv", "--no-color", "--unified=3", b, h, "--", old, p)
 		if err != nil {
 			return m, err
 		}
-		m.Arquivos = append(m.Arquivos, domain.Arquivo{Caminho: p, Anterior: old, Antes: before, Depois: after, Alteradas: intervals(diff)})
+		changed, numbered := parseHunks(diff)
+		total += len(before) + len(after) + len(numbered)
+		if total > maxContext {
+			return m, fmt.Errorf("snapshot alterado excede 2 MiB; divida a revisão")
+		}
+		m.Arquivos = append(m.Arquivos, domain.Arquivo{Caminho: p, Anterior: old, Antes: before, Depois: after, Alteradas: changed, DiffNumerado: numbered})
 	}
 	tree, err := r.run(ctx, "ls-tree", "-r", "-z", "--name-only", h)
 	if err != nil {

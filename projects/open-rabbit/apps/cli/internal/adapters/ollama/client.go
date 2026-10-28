@@ -13,14 +13,18 @@ import (
 )
 
 type Client struct {
-	HTTP     *http.Client
-	Endpoint string
-	Model    string
+	HTTP          *http.Client
+	Endpoint      string
+	Model         string
+	ContextLength int
 }
 
 func (c Client) Exchange(ctx context.Context, request command.Request) (json.RawMessage, error) {
 	if c.Model == "" {
 		return nil, fmt.Errorf("informe o modelo escolhido com --model")
+	}
+	if c.ContextLength <= 0 {
+		return nil, fmt.Errorf("informe com --num-ctx a janela de contexto, em tokens, configurada para o modelo")
 	}
 	u, err := url.Parse(c.Endpoint)
 	if err != nil || u.Scheme != "http" || u.User != nil || u.RawQuery != "" || u.Fragment != "" || (u.Hostname() != "127.0.0.1" && u.Hostname() != "localhost" && u.Hostname() != "::1") {
@@ -37,7 +41,15 @@ func (c Client) Exchange(ctx context.Context, request command.Request) (json.Raw
 	if err != nil {
 		return nil, err
 	}
-	body, err := json.Marshal(map[string]any{"model": c.Model, "stream": false, "format": "json", "messages": []map[string]string{{"role": "system", "content": command.Instructions}, {"role": "user", "content": string(data)}}})
+	body, err := json.Marshal(map[string]any{
+		"model":    c.Model,
+		"stream":   false,
+		"format":   "json",
+		"truncate": false,
+		"shift":    false,
+		"options":  map[string]int{"num_ctx": c.ContextLength},
+		"messages": []map[string]string{{"role": "system", "content": command.Instructions}, {"role": "user", "content": string(data)}},
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -58,6 +70,12 @@ func (c Client) Exchange(ctx context.Context, request command.Request) (json.Raw
 	}
 	defer response.Body.Close()
 	if response.StatusCode != http.StatusOK {
+		var failure struct {
+			Error string `json:"error"`
+		}
+		if raw, err := io.ReadAll(io.LimitReader(response.Body, 64<<10)); err == nil && json.Unmarshal(raw, &failure) == nil && failure.Error != "" {
+			return nil, fmt.Errorf("Ollama retornou HTTP %d: %s", response.StatusCode, failure.Error)
+		}
 		return nil, fmt.Errorf("Ollama retornou HTTP %d", response.StatusCode)
 	}
 	raw, err := io.ReadAll(io.LimitReader(response.Body, (2<<20)+1))
@@ -68,14 +86,19 @@ func (c Client) Exchange(ctx context.Context, request command.Request) (json.Raw
 		return nil, fmt.Errorf("resposta Ollama excede 2 MiB")
 	}
 	var envelope struct {
-		Done       bool   `json:"done"`
-		DoneReason string `json:"done_reason"`
-		Message    struct {
+		Done            bool   `json:"done"`
+		DoneReason      string `json:"done_reason"`
+		PromptEvalCount int    `json:"prompt_eval_count"`
+		EvalCount       int    `json:"eval_count"`
+		Message         struct {
 			Content string `json:"content"`
 		} `json:"message"`
 	}
 	if err := json.Unmarshal(raw, &envelope); err != nil {
 		return nil, fmt.Errorf("envelope Ollama inválido")
+	}
+	if used := envelope.PromptEvalCount + envelope.EvalCount; used >= c.ContextLength {
+		return nil, fmt.Errorf("janela de contexto esgotada: %d tokens de prompt e %d gerados para janela de %d; aumente --num-ctx ou divida a revisão", envelope.PromptEvalCount, envelope.EvalCount, c.ContextLength)
 	}
 	if !envelope.Done || envelope.DoneReason != "stop" || !json.Valid([]byte(envelope.Message.Content)) {
 		return nil, fmt.Errorf("Ollama retornou resposta incompleta ou JSON inválido")

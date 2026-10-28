@@ -15,8 +15,23 @@ Cada invocação recebe um documento JSON em stdin, contendo:
 | `candidate` | achado a refutar, só em verify |
 
 Arquivos contêm `Caminho`, `Anterior`, `Antes`, `Depois`, `Alteradas`
-(`Inicio`/`Fim`, inclusivos no head). Contexto contém `Caminho`/`Conteudo`.
-Esses nomes são o contrato JSON v1, preservados pelos tipos de domínio.
+(`Inicio`/`Fim`, inclusivos no head) e `DiffNumerado`. Contexto contém
+`Caminho`/`Conteudo`. Esses nomes são o contrato JSON v1, preservados pelos
+tipos de domínio.
+
+`DiffNumerado` é aditivo: repete os hunks do diff com três linhas de contexto.
+Cada linha traz o número no head com seis colunas, o marcador (`+` adicionada,
+`-` removida, espaço para contexto), um espaço e o texto literal. Linhas
+removidas não têm número. `Alteradas` é derivada das linhas `+` desse mesmo diff.
+
+```text
+@@ -2,2 +2,2 @@ func A() int {
+     2   	x := 1
+       - 	return x
+     3 + 	return x + 1
+```
+
+`Linha` do achado usa o número exibido; `Trecho` é o texto após o marcador.
 
 Resposta de candidates:
 
@@ -59,4 +74,7 @@ O comando é confiável e executa com permissões do operador. O diretório
 temporário não restringe filesystem ou rede. Não use um agente com acesso amplo
 a ferramentas se a intenção for apenas consultar um modelo. O bridge fornecido
 faz uma chamada de chat ao Ollama loopback, sem ferramentas ou redirects.
+Ele exige `--num-ctx` e envia `options.num_ctx`, `truncate:false` e `shift:false`:
+prompt acima da janela falha no Ollama em vez de ser cortado. Também recusa a
+resposta quando tokens de prompt e gerados alcançam a janela.
 Consulte o [contrato Ollama](https://docs.ollama.com/api/chat).

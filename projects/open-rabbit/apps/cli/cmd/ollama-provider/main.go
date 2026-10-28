@@ -23,6 +23,7 @@ func main() {
 func run() error {
 	model := flag.String("model", "", "modelo escolhido pelo operador")
 	endpoint := flag.String("endpoint", "http://127.0.0.1:11434/api/chat", "endpoint local Ollama")
+	contextLength := flag.Int("num-ctx", 0, "janela de contexto em tokens configurada para o modelo")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		return fmt.Errorf("argumento inesperado")
@@ -40,7 +41,7 @@ func run() error {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 110*time.Second)
 	defer cancel()
-	response, err := (ollama.Client{Model: *model, Endpoint: *endpoint}).Exchange(ctx, request)
+	response, err := (ollama.Client{Model: *model, Endpoint: *endpoint, ContextLength: *contextLength}).Exchange(ctx, request)
 	if err != nil {
 		return err
 	}

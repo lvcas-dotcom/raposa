@@ -12,11 +12,12 @@ type Intervalo struct {
 }
 
 type Arquivo struct {
-	Caminho   string
-	Anterior  string
-	Antes     string
-	Depois    string
-	Alteradas []Intervalo
+	Caminho      string
+	Anterior     string
+	Antes        string
+	Depois       string
+	Alteradas    []Intervalo
+	DiffNumerado string
 }
 
 type Contexto struct {
