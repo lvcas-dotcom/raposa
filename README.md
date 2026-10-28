@@ -101,10 +101,11 @@ O JSON contém trechos do repositório; mantenha os relatórios no ambiente auto
 - [Comparação de capacidades e próximos marcos](docs/roadmap.md)
 - [Protocolo de avaliação](docs/evaluation.md)
 - [Decisões de arquitetura](docs/arquitetura/adr/0001-nucleo-go-e-adapters.md)
-- [Metodologia de desenvolvimento](docs/processo/workflow.md)
-- [Issue local #1](docs/issue/1/issue.md)
+- [Como contribuir](CONTRIBUTING.md) e [board do projeto](https://github.com/users/lvcas-dotcom/projects/6)
+- [Fluxo de desenvolvimento](docs/processo/workflow.md) e [revisão](docs/processo/revisao.md)
+- [Registro das issues](docs/issue/README.md)
 
 O projeto usa product-first, dependency rule, ports no chamador, ADRs, issues,
 notas, validação e fecho. A CI está em `.github/workflows/ci.yml`.
 Repositório: [lvcas-dotcom/raposa](https://github.com/lvcas-dotcom/raposa).
-A licença de distribuição ainda será definida pelo mantenedor.
+A licença de distribuição ainda será definida ([#17](https://github.com/lvcas-dotcom/raposa/issues/17)).

@@ -1,5 +1,9 @@
 # #1 — feat: estabelecer investigação reproduzível e revisor local
 
+> Registro do bootstrap, anterior ao fluxo no GitHub. Foi criado como `docs/issue/1/`
+> e movido para `docs/issue/0/` porque a #1 do GitHub é o piloto de revisão semântica.
+> Caminhos citados dentro deste registro são os da época.
+
 ## Contexto
 
 O usuário solicitou instalar e usar o REA para estudar o comportamento observável

@@ -31,4 +31,4 @@ nem afirmação de sandbox para o processo do provedor.
 
 Referências: `os/exec` na [stdlib](https://pkg.go.dev/os/exec),
 [SDKs oficiais MCP](https://modelcontextprotocol.io/docs/sdk),
-[contexto registrado nas notas](../../issue/1/notes/notes-20261021T140601Z.md).
+[contexto registrado nas notas](../../issue/0/notes/notes-20261021T140601Z.md).

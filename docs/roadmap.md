@@ -17,17 +17,18 @@ Comparação funcional baseada na documentação pública, sem comparação de a
 ## Sequência sugerida
 
 1. Escolher provedor/modelo e stack inicial de avaliação. Registrar custo, versões
-   e parâmetros. Executar casos controlados e confirmar que falhas permanecem visíveis.
+   e parâmetros. Executar casos controlados e confirmar que falhas permanecem visíveis (#1).
 2. Coletar 30–50 mudanças reais com casos limpos e defeitos confirmados. Reservar
-   parte sem usar no desenvolvimento de prompts e recuperação.
+   parte sem usar no desenvolvimento de prompts e recuperação (#12).
 3. Medir baseline, modelo sem refutação e pipeline completo. Investigar erros por
    classe antes de adicionar complexidade.
-4. Ampliar contexto e ferramentas conforme os falsos negativos observados.
-5. Integrar provedores Git e memória depois que houver utilidade mensurável.
+4. Ampliar contexto e ferramentas conforme os falsos negativos observados (#7, #9).
+5. Integrar provedores Git e memória depois que houver utilidade mensurável (#10, #11).
 
-Cada marco vira issue com aceite verificável, notas antes de implementar e done
-com evidências. A issue #1 entrega o laboratório inicial; não representa conclusão
-do produto completo ou da meta de qualidade.
+Cada marco é uma issue no [board](https://github.com/users/lvcas-dotcom/projects/6),
+com aceite verificável, notas antes de implementar e done com evidências. O
+laboratório inicial está em `docs/issue/0/`; não representa conclusão do produto
+completo ou da meta de qualidade.
 
 ## Referências que orientam o próximo recorte
 
