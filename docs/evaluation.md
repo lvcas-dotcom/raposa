@@ -1,6 +1,6 @@
 # Avaliação de qualidade
 
-Meta: descobrir em quais classes o Open Rabbit aproxima ou supera um comparador,
+Meta: descobrir em quais classes a Raposa aproxima ou supera um comparador,
 e onde perde. CodeRabbit é um comparador, não um gabarito infalível.
 
 ## Protocolo
@@ -25,7 +25,7 @@ e onde perde. CodeRabbit é um comparador, não um gabarito infalível.
 ## Calculadora implementada
 
 ```sh
-./bin/open-rabbit evaluate \
+./bin/raposa evaluate \
   --input examples/evaluation.example.json \
   --output /tmp/metrics-demo.json
 ```

@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-cd "$root/projects/open-rabbit/apps/cli"
+cd "$root/projects/raposa/apps/cli"
 files=$(gofmt -l .)
 if [ -n "$files" ]; then
   printf '%s\n' "$files"

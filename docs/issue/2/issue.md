@@ -31,3 +31,5 @@ recorte exato do banner por script e a publicação desse ajuste, sem coautoria.
 ## Registro
 
 Issue local para rastrear esta execução. Ainda não foi criada uma issue remota.
+
+Espelhada no GitHub em 2026-10-28 como [#2](https://github.com/lvcas-dotcom/raposa/issues/2).

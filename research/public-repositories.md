@@ -1,4 +1,4 @@
-# Fontes públicas úteis para o Open Rabbit
+# Fontes públicas úteis para a Raposa
 
 Consulta: 2026-10-21. Método: leitura de fontes públicas e comparação com o código
 local, sem executar programas de terceiros ou modelos. Este recorte não é um
@@ -10,7 +10,7 @@ Os repositórios consultados oferecem demonstrações, regras e integrações. N
 identificado neles o motor completo de produção do CodeRabbit. Estudar um exemplo
 publicado não comprova que o serviço comercial execute o mesmo pipeline ou modelo.
 
-| Fonte | O que foi identificado | Aplicação no Open Rabbit | Prioridade |
+| Fonte | O que foi identificado | Aplicação na Raposa | Prioridade |
 | --- | --- | --- | --- |
 | [odsc-west-2025](https://github.com/coderabbitai/odsc-west-2025) | Revisor demonstrativo em Python; licença Apache-2.0 | Referência para buscar contexto além do diff | Alta |
 | [ast-grep-essentials](https://github.com/coderabbitai/ast-grep-essentials) | Regras estáticas, utilitários e testes; Apache-2.0; arquivado na consulta | Candidatas a um adapter de análise, após validação por regra | Alta |
@@ -21,7 +21,7 @@ publicado não comprova que o serviço comercial execute o mesmo pipeline ou mod
 
 O estado de arquivamento e as licenças podem mudar. Conferir o arquivo de licença
 na versão escolhida antes de incorporar qualquer código. Esta documentação não
-incorpora código dessas fontes nem define a licença do Open Rabbit.
+incorpora código dessas fontes nem define a licença da Raposa.
 
 ## Demonstração de contexto além do diff
 
@@ -45,7 +45,7 @@ de refutação após a geração no fluxo observado.
 Essas observações delimitam a demonstração; não são evidências de limitações do
 produto comercial. Não foi medida a precisão do exemplo.
 
-## Diferença em relação ao Open Rabbit atual
+## Diferença em relação à Raposa atual
 
 | Aspecto | Código local conferido | Trabalho necessário |
 | --- | --- | --- |
@@ -55,9 +55,9 @@ produto comercial. Não foi medida a precisão do exemplo.
 | Verificação | Evidência literal, linha no diff e segunda passagem quando há provedor | Dar ao verificador o contexto ampliado e sua procedência |
 | Ferramentas estáticas | Uma baseline AST Go | Normalizar regras externas por adapter e verificar sua utilidade |
 
-Fontes locais: [snapshot Git](../projects/open-rabbit/apps/cli/internal/adapters/git/repository.go),
-[pipeline de revisão](../projects/open-rabbit/apps/cli/internal/application/review.go)
-e [baseline estática](../projects/open-rabbit/apps/cli/internal/adapters/gostatic/analyzer.go).
+Fontes locais: [snapshot Git](../projects/raposa/apps/cli/internal/adapters/git/repository.go),
+[pipeline de revisão](../projects/raposa/apps/cli/internal/application/review.go)
+e [baseline estática](../projects/raposa/apps/cli/internal/adapters/gostatic/analyzer.go).
 
 ## Proposta de aplicação
 
@@ -102,4 +102,4 @@ ruído, incluindo casos limpos e um conjunto reservado. Ver o
 
 Só promover a recuperação ampliada ou uma regra externa após observar ganho e
 custos nos casos relevantes. A existência desses repositórios não estabelece
-paridade de qualidade e não dispensa a medição do Open Rabbit.
+paridade de qualidade e não dispensa a medição da Raposa.

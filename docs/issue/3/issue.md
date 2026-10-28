@@ -28,3 +28,5 @@ implementar funcionalidades, alterar imagens, criar issue remota, commit ou push
 ## Registro
 
 Issue local desta execução. Ainda não foi criado um número correspondente no GitHub.
+
+Espelhada no GitHub em 2026-10-28 como [#3](https://github.com/lvcas-dotcom/raposa/issues/3).

@@ -59,7 +59,7 @@ A amostra mostra localização por arquivo/linha, níveis de severidade,
 explicação de impacto, sugestões e uma cadeia de análise exposta. Inclui
 apontamentos de runtime além do propósito de demonstrar analisadores estáticos.
 Não permite reconstruir o processo interno. Nenhum dos cinco apontamentos foi
-adjudicado, nem a amostra foi usada para medir qualidade do Open Rabbit.
+adjudicado, nem a amostra foi usada para medir qualidade da Raposa.
 
 ## Hipóteses de produto a testar
 
@@ -73,7 +73,7 @@ O [plano de avaliação](../docs/evaluation.md) define como medi-las.
 ## Referências públicas para evolução
 
 A análise dos repositórios e as propostas aplicáveis estão em
-[fontes públicas úteis para o Open Rabbit](public-repositories.md), com o commit
+[fontes públicas úteis para a Raposa](public-repositories.md), com o commit
 da demonstração examinada, limitações e diferenças para a implementação local.
 Essa referência é um plano de estudo e evolução; não acrescenta funcionalidades
 ao revisor nem comprova a arquitetura interna do serviço comercial.

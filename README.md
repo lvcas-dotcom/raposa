@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="img/banner-open-rabbit-wide.png" alt="Banner do OpenRabbit" width="100%">
+  <img src="img/banner.png" alt="Banner do projeto Raposa" width="100%">
 </p>
 
-# <img src="img/icon-open-rabbit-v2.png" alt="" width="40" height="40"> Open Rabbit
+# <img src="img/logo.png" alt="" width="40" height="40"> Raposa
 
 Revisor de código local e laboratório de avaliação, inspirado nas capacidades
 públicas do CodeRabbit. Objetivo: aproximar qualidade por evidência e medição.
@@ -15,11 +15,11 @@ Requisitos: Git, Go 1.27.1; moon 2.3.4 é opcional para executar as mesmas tasks
 As versões ficam em `.prototools`. Não há dependências Go externas.
 
 ```sh
-cd open-rabbit
+cd raposa
 proto install
 sh scripts/check.sh
 sh scripts/build.sh
-./bin/open-rabbit --help
+./bin/raposa --help
 ```
 
 Recebe dois commits de um repositório existente. Não faz checkout e não executa
@@ -27,12 +27,12 @@ os builds, testes ou hooks do alvo. O relatório identifica os SHAs completos.
 Use as referências desejadas do seu repositório:
 
 ```sh
-./bin/open-rabbit review \
+./bin/raposa review \
   --repo '/caminho/do/repositorio' \
   --base main --head minha-branch \
   --format md --output /tmp/review.md
 
-./bin/open-rabbit prepare \
+./bin/raposa prepare \
   --repo '/caminho/do/repositorio' \
   --base main --head minha-branch \
   --output /tmp/review-context.json
@@ -53,11 +53,12 @@ candidatos e tentativa de refutação.
 
 1. Tenha Ollama rodando e um modelo escolhido disponível nele.
 2. Copie `examples/provider.example.json` para `provider.local.json`.
-3. Substitua o caminho absoluto e o modelo no arquivo.
+3. Substitua o caminho absoluto, o modelo e a janela de contexto (`--num-ctx`,
+   em tokens) no arquivo. Prompt maior que a janela encerra com erro, sem cortar.
 4. Execute:
 
 ```sh
-./bin/open-rabbit review \
+./bin/raposa review \
   --repo '/caminho/do/repositorio' \
   --base main --head minha-branch \
   --provider-config provider.local.json \
@@ -100,10 +101,11 @@ O JSON contém trechos do repositório; mantenha os relatórios no ambiente auto
 - [Comparação de capacidades e próximos marcos](docs/roadmap.md)
 - [Protocolo de avaliação](docs/evaluation.md)
 - [Decisões de arquitetura](docs/arquitetura/adr/0001-nucleo-go-e-adapters.md)
-- [Metodologia de desenvolvimento](docs/processo/workflow.md)
-- [Issue local #1](docs/issue/1/issue.md)
+- [Como contribuir](CONTRIBUTING.md) e [board do projeto](https://github.com/users/lvcas-dotcom/projects/6)
+- [Fluxo de desenvolvimento](docs/processo/workflow.md) e [revisão](docs/processo/revisao.md)
+- [Registro das issues](docs/issue/README.md)
 
 O projeto usa product-first, dependency rule, ports no chamador, ADRs, issues,
 notas, validação e fecho. A CI está em `.github/workflows/ci.yml`.
-Repositório: [lvcas-dotcom/open-rabbit](https://github.com/lvcas-dotcom/open-rabbit).
-A licença de distribuição ainda será definida pelo mantenedor.
+Repositório: [lvcas-dotcom/raposa](https://github.com/lvcas-dotcom/raposa).
+A licença de distribuição ainda será definida ([#17](https://github.com/lvcas-dotcom/raposa/issues/17)).

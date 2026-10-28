@@ -15,7 +15,7 @@ fundamentam a escolha inicial de Go.
 Go 1.27.1 no núcleo e CLI. Ports `Repository`, `Analyzer`, `Reviewer` pertencem
 ao application. Tipos de domínio não carregam tags de infraestrutura. Não há
 pacote compartilhado antes de dois consumidores. Um módulo de produto em
-`projects/open-rabbit/apps/cli` e workspace Go não vazio.
+`projects/raposa/apps/cli` e workspace Go não vazio.
 
 Provider por processo tem protocolo versionado e pode ser escrito em qualquer
 linguagem. Um bridge Ollama demonstra a integração sem escolher modelo. REA é
@@ -31,4 +31,4 @@ nem afirmação de sandbox para o processo do provedor.
 
 Referências: `os/exec` na [stdlib](https://pkg.go.dev/os/exec),
 [SDKs oficiais MCP](https://modelcontextprotocol.io/docs/sdk),
-[contexto registrado nas notas](../../issue/1/notes/notes-20261021T140601Z.md).
+[contexto registrado nas notas](../../issue/0/notes/notes-20261021T140601Z.md).

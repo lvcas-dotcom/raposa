@@ -1,7 +1,9 @@
 {
   "argv": [
-    "/caminho/absoluto/open-rabbit/bin/ollama-provider",
+    "/caminho/absoluto/raposa/bin/ollama-provider",
     "--model",
-    "MODELO_ESCOLHIDO_PELO_OPERADOR"
+    "MODELO_ESCOLHIDO_PELO_OPERADOR",
+    "--num-ctx",
+    "JANELA_DE_CONTEXTO_EM_TOKENS"
   ]
 }
