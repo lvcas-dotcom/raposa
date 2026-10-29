@@ -47,7 +47,7 @@ func run(ctx context.Context, args []string, out, stderr io.Writer) error {
 	output := f.String("output", "", "arquivo de saída; default stdout")
 	input := f.String("input", "", "avaliação adjudicada por humano")
 	timeout := f.Duration("timeout", 10*time.Minute, "prazo total")
-	providerTimeout := f.Duration("provider-timeout", 120*time.Second, "prazo por chamada ao provedor; no máximo igual a --timeout")
+	providerTimeout := f.Duration("provider-timeout", 120*time.Second, "prazo por chamada ao provedor; no máximo igual a --timeout; sem a flag, limitado a --timeout")
 	if err := f.Parse(args[1:]); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
 			return nil
@@ -66,8 +66,16 @@ func run(ctx context.Context, args []string, out, stderr io.Writer) error {
 	if *providerTimeout <= 0 {
 		return fmt.Errorf("provider-timeout deve ser positivo")
 	}
-	if *provider != "" && *providerTimeout > *timeout {
-		return fmt.Errorf("provider-timeout não pode exceder timeout")
+	providerTimeoutSet := false
+	f.Visit(func(fl *flag.Flag) { providerTimeoutSet = providerTimeoutSet || fl.Name == "provider-timeout" })
+	if providerTimeoutSet && *provider == "" {
+		return fmt.Errorf("provider-timeout exige provider-config")
+	}
+	if *providerTimeout > *timeout {
+		if providerTimeoutSet {
+			return fmt.Errorf("provider-timeout não pode exceder timeout")
+		}
+		*providerTimeout = *timeout
 	}
 	ctx, cancel := context.WithTimeout(ctx, *timeout)
 	defer cancel()
