@@ -70,6 +70,11 @@ Somente um JSON, sem markdown ou logs no stdout. Campos desconhecidos, resposta
 extra, conteúdo incompleto, exit code não zero, timeout e saída acima de 1 MiB
 encerram a execução com erro. O stderr do processo não é colocado no relatório.
 
+Cada invocação tem prazo próprio, `review --provider-timeout` (default 120 s, no
+máximo igual a `--timeout`), registrado no relatório como `PrazoProvedorMS`.
+O bridge Ollama tem `--timeout` (default 110 s); mantenha-o abaixo do prazo do
+CLI para que o erro venha do bridge, com a causa, e não do encerramento do processo.
+
 O comando é confiável e executa com permissões do operador. O diretório
 temporário não restringe filesystem ou rede. Não use um agente com acesso amplo
 a ferramentas se a intenção for apenas consultar um modelo. O bridge fornecido

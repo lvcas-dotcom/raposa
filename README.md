@@ -55,6 +55,8 @@ candidatos e tentativa de refutação.
 2. Copie `examples/provider.example.json` para `provider.local.json`.
 3. Substitua o caminho absoluto, o modelo e a janela de contexto (`--num-ctx`,
    em tokens) no arquivo. Prompt maior que a janela encerra com erro, sem cortar.
+   Em CPU, aumente o prazo por chamada: `--timeout` no bridge e
+   `--provider-timeout` no `review`, com o do bridge menor.
 4. Execute:
 
 ```sh
