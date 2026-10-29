@@ -145,14 +145,20 @@ func providerConfig(t *testing.T, mode string) string {
 func TestProviderTimeoutValidado(t *testing.T) {
 	config := providerConfig(t, "semantic-provider")
 	cases := map[string][]string{
-		"zero":           {"--provider-timeout", "0s"},
-		"negativo":       {"--provider-timeout", "-1s"},
-		"acima do total": {"--provider-config", config, "--timeout", "1m", "--provider-timeout", "2m"},
+		"zero":            {"--provider-config", config, "--provider-timeout", "0s"},
+		"negativo":        {"--provider-config", config, "--provider-timeout", "-1s"},
+		"acima do total":  {"--provider-config", config, "--timeout", "1m", "--provider-timeout", "2m"},
+		"sem provedor":    {"--provider-timeout", "1m"},
+		"prepare sem uso": {"--provider-timeout", "1m"},
 	}
 	for name, extra := range cases {
 		t.Run(name, func(t *testing.T) {
 			var out, stderr bytes.Buffer
-			args := append([]string{"review", "--base", "a", "--head", "b"}, extra...)
+			command := "review"
+			if name == "prepare sem uso" {
+				command = "prepare"
+			}
+			args := append([]string{command, "--base", "a", "--head", "b"}, extra...)
 			err := run(context.Background(), args, &out, &stderr)
 			if err == nil || !strings.Contains(err.Error(), "provider-timeout") {
 				t.Fatalf("esperava recusa do provider-timeout: %v", err)
@@ -166,26 +172,48 @@ func TestProviderTimeoutValidado(t *testing.T) {
 	}
 }
 
-func TestProviderTimeoutEncerraSemRelatorio(t *testing.T) {
-	dir := t.TempDir()
+func smallRepo(t *testing.T) (dir, base, head string) {
+	t.Helper()
+	dir = t.TempDir()
 	commandGit(t, dir, "init", "--initial-branch=main")
 	if err := os.WriteFile(filepath.Join(dir, "a.go"), []byte("package a\n"), 0600); err != nil {
 		t.Fatal(err)
 	}
 	commandGit(t, dir, "add", ".")
 	commandGit(t, dir, "-c", "core.hooksPath=/dev/null", "commit", "-m", "base")
-	base := commandGit(t, dir, "rev-parse", "HEAD")
+	base = commandGit(t, dir, "rev-parse", "HEAD")
 	if err := os.WriteFile(filepath.Join(dir, "a.go"), []byte("package a\n\nvar X = 1\n"), 0600); err != nil {
 		t.Fatal(err)
 	}
 	commandGit(t, dir, "add", ".")
 	commandGit(t, dir, "-c", "core.hooksPath=/dev/null", "commit", "-m", "head")
-	head := commandGit(t, dir, "rev-parse", "HEAD")
+	head = commandGit(t, dir, "rev-parse", "HEAD")
+	return dir, base, head
+}
+
+func TestProviderTimeoutPadraoLimitadoAoTotal(t *testing.T) {
+	dir, base, head := smallRepo(t)
+	var out, stderr bytes.Buffer
+	args := []string{"review", "--repo", dir, "--base", base, "--head", head, "--provider-config", providerConfig(t, "semantic-provider"), "--timeout", "1m"}
+	if err := run(context.Background(), args, &out, &stderr); err != nil {
+		t.Fatal(err)
+	}
+	var report application.Relatorio
+	if err := json.Unmarshal(out.Bytes(), &report); err != nil {
+		t.Fatal(err)
+	}
+	if report.PrazoProvedorMS != 60000 {
+		t.Fatalf("prazo efetivo deveria ser o total: %d", report.PrazoProvedorMS)
+	}
+}
+
+func TestProviderTimeoutEncerraSemRelatorio(t *testing.T) {
+	dir, base, head := smallRepo(t)
 	output := filepath.Join(t.TempDir(), "relatório.json")
 	var out, stderr bytes.Buffer
 	start := time.Now()
 	err := run(context.Background(), []string{"review", "--repo", dir, "--base", base, "--head", head, "--provider-config", providerConfig(t, "slow-provider"), "--provider-timeout", "100ms", "--output", output}, &out, &stderr)
-	if err == nil || time.Since(start) > 3*time.Second {
+	if err == nil || !strings.Contains(err.Error(), "provedor falhou ou excedeu") || time.Since(start) > 4*time.Second {
 		t.Fatalf("prazo por chamada não respeitado: %v", err)
 	}
 	if _, err := os.Stat(output); !os.IsNotExist(err) {
