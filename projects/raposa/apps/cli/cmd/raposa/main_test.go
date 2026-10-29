@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"raposa.local/cli/internal/adapters/command"
 	"raposa.local/cli/internal/application"
@@ -28,7 +29,15 @@ func commandGit(t *testing.T, dir string, args ...string) string {
 }
 
 func TestSemanticHelper(t *testing.T) {
-	if len(os.Args) == 0 || os.Args[len(os.Args)-1] != "semantic-provider" {
+	if len(os.Args) == 0 {
+		return
+	}
+	switch os.Args[len(os.Args)-1] {
+	case "slow-provider":
+		time.Sleep(5 * time.Second)
+		os.Exit(0)
+	case "semantic-provider":
+	default:
 		return
 	}
 	var r command.Request
@@ -85,6 +94,9 @@ func TestCLIRevisaGitRealEExportaJSONMarkdownEContexto(t *testing.T) {
 	if len(report.Achados) != 1 || len(report.Descartados) != 1 || report.Modo != "static+semantic" {
 		t.Fatalf("relatório incorreto: %+v", report)
 	}
+	if report.PrazoProvedorMS != 120000 {
+		t.Fatalf("prazo efetivo ausente: %d", report.PrazoProvedorMS)
+	}
 	if !strings.Contains(report.Achados[0].Contraevidencia, "Fixture") {
 		t.Fatal("verificador não executado")
 	}
@@ -93,7 +105,7 @@ func TestCLIRevisaGitRealEExportaJSONMarkdownEContexto(t *testing.T) {
 		t.Fatal(err)
 	}
 	content, err := os.ReadFile(md)
-	if err != nil || !bytes.Contains(content, []byte("client.go:4")) {
+	if err != nil || !bytes.Contains(content, []byte("client.go:4")) || !bytes.Contains(content, []byte("prazo por chamada: 120000 ms")) {
 		t.Fatalf("Markdown ausente: %v", err)
 	}
 	out.Reset()
@@ -113,5 +125,70 @@ func TestCLIRevisaGitRealEExportaJSONMarkdownEContexto(t *testing.T) {
 	after, err := os.ReadFile(md)
 	if err != nil || !bytes.Equal(content, after) {
 		t.Fatal("falha sobrescreveu relatório anterior")
+	}
+}
+
+func providerConfig(t *testing.T, mode string) string {
+	t.Helper()
+	exe, err := os.Executable()
+	if err != nil {
+		t.Fatal(err)
+	}
+	config := filepath.Join(t.TempDir(), "provider.local.json")
+	raw, _ := json.Marshal(map[string]any{"argv": []string{exe, "-test.run=TestSemanticHelper", "--", mode}})
+	if err := os.WriteFile(config, raw, 0600); err != nil {
+		t.Fatal(err)
+	}
+	return config
+}
+
+func TestProviderTimeoutValidado(t *testing.T) {
+	config := providerConfig(t, "semantic-provider")
+	cases := map[string][]string{
+		"zero":           {"--provider-timeout", "0s"},
+		"negativo":       {"--provider-timeout", "-1s"},
+		"acima do total": {"--provider-config", config, "--timeout", "1m", "--provider-timeout", "2m"},
+	}
+	for name, extra := range cases {
+		t.Run(name, func(t *testing.T) {
+			var out, stderr bytes.Buffer
+			args := append([]string{"review", "--base", "a", "--head", "b"}, extra...)
+			err := run(context.Background(), args, &out, &stderr)
+			if err == nil || !strings.Contains(err.Error(), "provider-timeout") {
+				t.Fatalf("esperava recusa do provider-timeout: %v", err)
+			}
+		})
+	}
+	var out, stderr bytes.Buffer
+	err := run(context.Background(), []string{"review", "--base", "a", "--head", "b", "--timeout", "1m"}, &out, &stderr)
+	if err != nil && strings.Contains(err.Error(), "provider-timeout") {
+		t.Fatalf("sem provedor o prazo por chamada não limita --timeout: %v", err)
+	}
+}
+
+func TestProviderTimeoutEncerraSemRelatorio(t *testing.T) {
+	dir := t.TempDir()
+	commandGit(t, dir, "init", "--initial-branch=main")
+	if err := os.WriteFile(filepath.Join(dir, "a.go"), []byte("package a\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	commandGit(t, dir, "add", ".")
+	commandGit(t, dir, "-c", "core.hooksPath=/dev/null", "commit", "-m", "base")
+	base := commandGit(t, dir, "rev-parse", "HEAD")
+	if err := os.WriteFile(filepath.Join(dir, "a.go"), []byte("package a\n\nvar X = 1\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	commandGit(t, dir, "add", ".")
+	commandGit(t, dir, "-c", "core.hooksPath=/dev/null", "commit", "-m", "head")
+	head := commandGit(t, dir, "rev-parse", "HEAD")
+	output := filepath.Join(t.TempDir(), "relatório.json")
+	var out, stderr bytes.Buffer
+	start := time.Now()
+	err := run(context.Background(), []string{"review", "--repo", dir, "--base", base, "--head", head, "--provider-config", providerConfig(t, "slow-provider"), "--provider-timeout", "100ms", "--output", output}, &out, &stderr)
+	if err == nil || time.Since(start) > 3*time.Second {
+		t.Fatalf("prazo por chamada não respeitado: %v", err)
+	}
+	if _, err := os.Stat(output); !os.IsNotExist(err) {
+		t.Fatalf("relatório parcial gravado: %v", err)
 	}
 }
