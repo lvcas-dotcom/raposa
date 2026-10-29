@@ -31,7 +31,7 @@ func main() {
 
 func run(ctx context.Context, args []string, out, stderr io.Writer) error {
 	if len(args) == 0 || args[0] == "help" || args[0] == "--help" {
-		_, err := fmt.Fprintln(out, "Raposa\n\n  prepare --repo PATH --base REF --head REF [--output FILE]\n  review  --repo PATH --base REF --head REF [--provider-config FILE] [--format json|md] [--output FILE]\n  evaluate --input FILE [--output FILE]\n\nSem provider-config: baseline estática Go. Nenhum resultado representa aprovação automática.")
+		_, err := fmt.Fprintln(out, "Raposa\n\n  prepare --repo PATH --base REF --head REF [--output FILE]\n  review  --repo PATH --base REF --head REF [--provider-config FILE] [--provider-timeout DUR] [--format json|md] [--output FILE]\n  evaluate --input FILE [--output FILE]\n\nSem provider-config: baseline estática Go. Nenhum resultado representa aprovação automática.")
 		return err
 	}
 	if args[0] != "prepare" && args[0] != "review" && args[0] != "evaluate" {
@@ -47,6 +47,7 @@ func run(ctx context.Context, args []string, out, stderr io.Writer) error {
 	output := f.String("output", "", "arquivo de saída; default stdout")
 	input := f.String("input", "", "avaliação adjudicada por humano")
 	timeout := f.Duration("timeout", 10*time.Minute, "prazo total")
+	providerTimeout := f.Duration("provider-timeout", 120*time.Second, "prazo por chamada ao provedor; no máximo igual a --timeout")
 	if err := f.Parse(args[1:]); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
 			return nil
@@ -61,6 +62,12 @@ func run(ctx context.Context, args []string, out, stderr io.Writer) error {
 	}
 	if *timeout <= 0 {
 		return fmt.Errorf("timeout deve ser positivo")
+	}
+	if *providerTimeout <= 0 {
+		return fmt.Errorf("provider-timeout deve ser positivo")
+	}
+	if *provider != "" && *providerTimeout > *timeout {
+		return fmt.Errorf("provider-timeout não pode exceder timeout")
 	}
 	ctx, cancel := context.WithTimeout(ctx, *timeout)
 	defer cancel()
@@ -103,11 +110,14 @@ func run(ctx context.Context, args []string, out, stderr io.Writer) error {
 				if len(config.Argv) == 0 || !filepath.IsAbs(config.Argv[0]) {
 					return fmt.Errorf("argv exige executável absoluto")
 				}
-				s.Reviewer = command.Reviewer{Argv: config.Argv}
+				s.Reviewer = command.Reviewer{Argv: config.Argv, Timeout: *providerTimeout}
 			}
 			r, err := s.Review(ctx, *base, *head)
 			if err != nil {
 				return err
+			}
+			if *provider != "" {
+				r.PrazoProvedorMS = providerTimeout.Milliseconds()
 			}
 			result = &r
 			value = r
