@@ -33,13 +33,14 @@ type Descarte struct {
 }
 
 type Relatorio struct {
-	Versao      string
-	Mudanca     domain.Mudanca
-	Achados     []domain.Achado
-	Descartados []Descarte
-	Modo        string
-	DuracaoMS   int64
-	Limitacoes  []string
+	Versao          string
+	Mudanca         domain.Mudanca
+	Achados         []domain.Achado
+	Descartados     []Descarte
+	Modo            string
+	DuracaoMS       int64
+	PrazoProvedorMS int64 `json:",omitempty"`
+	Limitacoes      []string
 }
 
 type Service struct {
