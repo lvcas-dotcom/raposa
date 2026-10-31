@@ -1,6 +1,8 @@
 # ADR 0002 — Evidência antes de publicação e medição antes de paridade
 
-Status: adotada em 2026-10-21.
+Status: adotada em 2026-10-21. Complementada pela [ADR 0003](0003-benchmark-aberto.md)
+em 2026-10-31: a comparação passa a usar o benchmark aberto como régua comum;
+as regras de evidência abaixo permanecem.
 
 ## Decisão
 
