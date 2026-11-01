@@ -31,13 +31,20 @@ func main() {
 
 func run(ctx context.Context, args []string, out, stderr io.Writer) error {
 	if len(args) == 0 || args[0] == "help" || args[0] == "--help" {
-		_, err := fmt.Fprintln(out, "Raposa\n\n  prepare --repo PATH --base REF --head REF [--output FILE]\n  review  --repo PATH --base REF --head REF [--provider-config FILE] [--format json|md] [--output FILE]\n  evaluate --input FILE [--output FILE]\n\nSem provider-config: baseline estática Go. Nenhum resultado representa aprovação automática.")
+		_, err := fmt.Fprintln(out, "Raposa\n\n  prepare --repo PATH --base REF --head REF [--output FILE]\n  review  --repo PATH --base REF --head REF [--provider-config FILE] [--format json|md] [--output FILE]\n  evaluate --input FILE [--output FILE]\n  benchmark validate --input FILE [--repo PATH] [--output FILE]\n\nSem provider-config: baseline estática Go. Nenhum resultado representa aprovação automática.")
 		return err
 	}
-	if args[0] != "prepare" && args[0] != "review" && args[0] != "evaluate" {
+	name, rest := args[0], args[1:]
+	if name == "benchmark" {
+		if len(rest) == 0 || rest[0] != "validate" {
+			return fmt.Errorf("subcomando de benchmark desconhecido")
+		}
+		name, rest = "benchmark validate", rest[1:]
+	}
+	if name != "prepare" && name != "review" && name != "evaluate" && name != "benchmark validate" {
 		return fmt.Errorf("comando desconhecido")
 	}
-	f := flag.NewFlagSet(args[0], flag.ContinueOnError)
+	f := flag.NewFlagSet(name, flag.ContinueOnError)
 	f.SetOutput(stderr)
 	repo := f.String("repo", ".", "caminho do repositório Git")
 	base := f.String("base", "", "commit base")
@@ -47,7 +54,7 @@ func run(ctx context.Context, args []string, out, stderr io.Writer) error {
 	output := f.String("output", "", "arquivo de saída; default stdout")
 	input := f.String("input", "", "avaliação adjudicada por humano")
 	timeout := f.Duration("timeout", 10*time.Minute, "prazo total")
-	if err := f.Parse(args[1:]); err != nil {
+	if err := f.Parse(rest); err != nil {
 		if errors.Is(err, flag.ErrHelp) {
 			return nil
 		}
@@ -66,7 +73,30 @@ func run(ctx context.Context, args []string, out, stderr io.Writer) error {
 	defer cancel()
 	var value any
 	var result *application.Relatorio
-	switch args[0] {
+	switch name {
+	case "benchmark validate":
+		if *input == "" {
+			return fmt.Errorf("informe --input")
+		}
+		var d domain.Dataset
+		if err := readJSON(*input, &d); err != nil {
+			return err
+		}
+		resumo, err := domain.ValidarDataset(d)
+		if err != nil {
+			return fmt.Errorf("dataset inválido:\n%w", err)
+		}
+		repoInformado := false
+		f.Visit(func(fl *flag.Flag) { repoInformado = repoInformado || fl.Name == "repo" })
+		if repoInformado {
+			if err := application.VerificarNoRepositorio(ctx, gitadapter.Repository{Path: *repo}, d); err != nil {
+				return fmt.Errorf("dataset diverge do repositório:\n%w", err)
+			}
+		}
+		value = struct {
+			domain.ResumoDataset
+			VerificadoNoRepositorio bool
+		}{resumo, repoInformado}
 	case "evaluate":
 		if *input == "" {
 			return fmt.Errorf("informe --input")

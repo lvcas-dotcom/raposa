@@ -56,7 +56,7 @@ func (r Repository) run(ctx context.Context, args ...string) ([]byte, error) {
 	return out.Bytes(), nil
 }
 
-func (r Repository) resolve(ctx context.Context, ref string) (string, error) {
+func (r Repository) ResolveCommit(ctx context.Context, ref string) (string, error) {
 	if ref == "" {
 		return "", fmt.Errorf("referência vazia")
 	}
@@ -87,6 +87,18 @@ func (r Repository) blob(ctx context.Context, sha, p string) (string, bool, erro
 		return "", false, nil
 	}
 	return string(b), true, nil
+}
+
+func (r Repository) CountLines(ctx context.Context, commit, p string) (int, error) {
+	b, err := r.run(ctx, "cat-file", "blob", commit+":"+p)
+	if err != nil {
+		return 0, err
+	}
+	n := bytes.Count(b, []byte("\n"))
+	if len(b) > 0 && b[len(b)-1] != '\n' {
+		n++
+	}
+	return n, nil
 }
 
 var hunkHeader = regexp.MustCompile(`^@@ -[0-9]+(?:,[0-9]+)? \+([0-9]+)(?:,[0-9]+)? @@`)
@@ -126,11 +138,11 @@ func parseHunks(diff []byte) ([]domain.Intervalo, string) {
 }
 
 func (r Repository) Snapshot(ctx context.Context, base, head string) (domain.Mudanca, error) {
-	b, err := r.resolve(ctx, base)
+	b, err := r.ResolveCommit(ctx, base)
 	if err != nil {
 		return domain.Mudanca{}, err
 	}
-	h, err := r.resolve(ctx, head)
+	h, err := r.ResolveCommit(ctx, head)
 	if err != nil {
 		return domain.Mudanca{}, err
 	}
