@@ -1,0 +1,35 @@
+{
+  "Versao": "1",
+  "Repositorio": "https://example.invalid/raposa/exemplo-sintetico",
+  "Licenca": "Apache-2.0",
+  "Casos": [
+    {
+      "ID": "exemplo-sintetico-erro-ignorado",
+      "Linguagem": "go",
+      "Base": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "Head": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "Particao": "desenvolvimento",
+      "Limpo": false,
+      "Defeitos": [
+        {
+          "ID": "uso-antes-do-erro",
+          "Caminho": "internal/loader/load.go",
+          "Inicio": 18,
+          "Fim": 21,
+          "Classe": "fluxo-de-erro",
+          "Descricao": "O resultado de Open é usado antes de verificar o erro; com arquivo ausente, há nil pointer.",
+          "Origem": "sintetico"
+        }
+      ]
+    },
+    {
+      "ID": "exemplo-sintetico-erro-tratado",
+      "Linguagem": "go",
+      "Base": "cccccccccccccccccccccccccccccccccccccccc",
+      "Head": "dddddddddddddddddddddddddddddddddddddddd",
+      "Particao": "reservado",
+      "Limpo": true,
+      "Defeitos": []
+    }
+  ]
+}
