@@ -66,6 +66,33 @@ Resposta de verify:
 {"confirmed": false, "reason": "Proteção presente, hipótese incorreta ou contexto insuficiente, com justificativa"}
 ```
 
+## Fase opcional `summary`
+
+Aditiva à v1: `version` continua `"1"` e `candidates`/`verify` não mudam. É
+chamada uma vez por revisão com provedor semântico, com `phase: "summary"`,
+`instructions` próprias e `change`, sem `candidate`. Resposta:
+
+```json
+{"summary": {"Resumo": "Descrição da mudança", "Arquivos": [
+  {"Caminho": "a.go", "Linha": "Descrição em uma linha", "Ancora": {"Inicio": 4, "Fim": 6}},
+  {"Caminho": "removido.go", "Linha": "Arquivo removido"}
+]}}
+```
+
+Limites, validados pelo pipeline (qualquer violação descarta o resumo inteiro):
+
+- `Resumo` não vazio, até 1500 caracteres.
+- `Linha` não vazia, até 240 caracteres, sem quebra de linha.
+- Uma entrada por arquivo da mudança, sem caminhos repetidos ou desconhecidos.
+- `Ancora` (números do head, como no `DiffNumerado`) contida em um intervalo de
+  `Alteradas`; omitida quando o arquivo não tem linhas alteradas.
+
+O resumo é texto do modelo, não verificado: aparece no relatório (seção
+"Resumo da mudança" e campo JSON `Resumo` com `Origem: "modelo"`), nunca entra
+nas fases `candidates`/`verify` e não vale como evidência. Provedor sem a fase,
+falha ou resumo inválido não interrompem a revisão; o relatório declara a
+ausência em Limitações. O bridge Ollama não implementa a fase.
+
 Somente um JSON, sem markdown ou logs no stdout. Campos desconhecidos, resposta
 extra, conteúdo incompleto, exit code não zero, timeout e saída acima de 1 MiB
 encerram a execução com erro. O stderr do processo não é colocado no relatório.
