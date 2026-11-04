@@ -16,6 +16,16 @@ func text(v string) string {
 func Markdown(w io.Writer, r application.Relatorio) error {
 	var b strings.Builder
 	fmt.Fprintf(&b, "# Raposa\n\nBase: `%s`\n\nHead: `%s`\n\nModo: %s · duração: %d ms\n\n%d achado(s), %d candidato(s) descartado(s). Resultado informativo; ausência de achados não representa aprovação.\n", r.Mudanca.Base, r.Mudanca.Head, r.Modo, r.DuracaoMS, len(r.Achados), len(r.Descartados))
+	if r.Resumo != nil {
+		fmt.Fprintf(&b, "\n## Resumo da mudança\n\n> Gerado pelo modelo, não verificado. Não é evidência de achados.\n\n%s\n\n", text(r.Resumo.Resumo))
+		for _, f := range r.Resumo.Arquivos {
+			where := text(f.Caminho)
+			if f.Ancora != nil {
+				where = fmt.Sprintf("%s:%d-%d", where, f.Ancora.Inicio, f.Ancora.Fim)
+			}
+			fmt.Fprintf(&b, "- %s: %s\n", where, text(f.Linha))
+		}
+	}
 	for _, a := range r.Achados {
 		fmt.Fprintf(&b, "\n## [%s] %s\n\n%s:%d · confiança %.2f · ID %s\n\nCondição: %s\n\nImpacto: %s\n\nEsperado: %s\n\nVerificação: %s\n", a.Severidade, text(a.Titulo), text(a.Caminho), a.Linha, a.Confianca, a.ID, text(a.Condicao), text(a.Impacto), text(a.Esperado), text(a.Contraevidencia))
 		for _, e := range a.Evidencias {

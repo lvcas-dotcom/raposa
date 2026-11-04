@@ -22,6 +22,11 @@ type Reviewer interface {
 	Verify(context.Context, domain.Mudanca, domain.Achado) (Veredito, error)
 }
 
+// Summarizer é a fase opcional de resumo; provedores sem ela seguem válidos.
+type Summarizer interface {
+	Summarize(context.Context, domain.Mudanca) (domain.Resumo, error)
+}
+
 type Veredito struct {
 	Confirmado bool
 	Motivo     string
@@ -37,6 +42,7 @@ type Relatorio struct {
 	Mudanca     domain.Mudanca
 	Achados     []domain.Achado
 	Descartados []Descarte
+	Resumo      *domain.Resumo `json:",omitempty"`
 	Modo        string
 	DuracaoMS   int64
 	Limitacoes  []string
@@ -67,6 +73,10 @@ func (s Service) Review(ctx context.Context, base, head string) (Relatorio, erro
 			return Relatorio{}, fmt.Errorf("geração de candidatos: %w", err)
 		}
 		candidates = append(candidates, semantic...)
+		if err := ctx.Err(); err != nil {
+			return Relatorio{}, err
+		}
+		r.resumir(ctx, s.Reviewer, m)
 	} else {
 		r.Limitacoes = append(r.Limitacoes, "Provedor semântico não configurado; apenas baseline estática Go, sem revisão geral de lógica.")
 	}
@@ -108,4 +118,24 @@ func (s Service) Review(ctx context.Context, base, head string) (Relatorio, erro
 	})
 	r.DuracaoMS = time.Since(start).Milliseconds()
 	return r, nil
+}
+
+// resumir nunca falha a revisão: qualquer problema vira Limitação. O resumo não
+// alimenta candidatos, verificação nem validação de achados.
+func (r *Relatorio) resumir(ctx context.Context, reviewer Reviewer, m domain.Mudanca) {
+	sm, ok := reviewer.(Summarizer)
+	if !ok {
+		r.Limitacoes = append(r.Limitacoes, "Resumo da mudança indisponível: provedor sem a fase summary.")
+		return
+	}
+	resumo, err := sm.Summarize(ctx, m)
+	if err == nil {
+		err = resumo.Validate(m)
+	}
+	if err != nil {
+		r.Limitacoes = append(r.Limitacoes, "Resumo da mudança indisponível: "+err.Error())
+		return
+	}
+	resumo.Origem = domain.OrigemModelo
+	r.Resumo = &resumo
 }
