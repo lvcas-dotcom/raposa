@@ -22,7 +22,6 @@ type Reviewer interface {
 	Verify(context.Context, domain.Mudanca, domain.Achado) (Veredito, error)
 }
 
-// Summarizer é a fase opcional de resumo; provedores sem ela seguem válidos.
 type Summarizer interface {
 	Summarize(context.Context, domain.Mudanca) (domain.Resumo, error)
 }
@@ -120,8 +119,6 @@ func (s Service) Review(ctx context.Context, base, head string) (Relatorio, erro
 	return r, nil
 }
 
-// resumir nunca falha a revisão: qualquer problema vira Limitação. O resumo não
-// alimenta candidatos, verificação nem validação de achados.
 func (r *Relatorio) resumir(ctx context.Context, reviewer Reviewer, m domain.Mudanca) {
 	sm, ok := reviewer.(Summarizer)
 	if !ok {

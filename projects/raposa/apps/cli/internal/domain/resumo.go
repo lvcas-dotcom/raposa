@@ -18,15 +18,12 @@ type ResumoArquivo struct {
 	Ancora  *Intervalo `json:",omitempty"`
 }
 
-// Resumo é texto gerado pelo modelo sobre a mudança. Não é evidência e nunca
-// participa da validação de achados.
 type Resumo struct {
 	Origem   string
 	Resumo   string
 	Arquivos []ResumoArquivo
 }
 
-// Validate recusa o resumo inteiro se qualquer regra falhar.
 func (r Resumo) Validate(m Mudanca) error {
 	if strings.TrimSpace(r.Resumo) == "" {
 		return fmt.Errorf("resumo vazio")
