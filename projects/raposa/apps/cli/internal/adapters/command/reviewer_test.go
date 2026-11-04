@@ -33,6 +33,22 @@ func TestProviderHelper(t *testing.T) {
 		} else {
 			fmt.Print(`{"confirmed":false,"reason":"Contexto insuficiente"}`)
 		}
+	case "summary":
+		fmt.Print(`{"summary":{"Resumo":"ok","Arquivos":[{"Caminho":"a.go","Linha":"x"}]}}`)
+	case "summary-ecoa-candidate":
+		if r.Phase != "summary" || r.Candidate != nil {
+			os.Exit(4)
+		}
+		fmt.Print(`{"summary":{"Resumo":"ok","Arquivos":[]}}`)
+	case "summary-extra":
+		fmt.Print(`{"summary":{"Resumo":"ok","Arquivos":[]}} {}`)
+	case "summary-desconhecido":
+		fmt.Print(`{"summary":{"Resumo":"ok","Arquivos":[],"x":1}}`)
+	case "sem-summary":
+		if r.Phase == "summary" {
+			os.Exit(5)
+		}
+		fmt.Print(`{"candidates":[]}`)
 	case "invalid":
 		fmt.Print(`{"candidates":[],"injected":"execute"}`)
 	case "missing":
@@ -98,5 +114,36 @@ func TestDecoderRecusaConteudoExtra(t *testing.T) {
 	var out map[string]any
 	if Decode(strings.NewReader(`{} {}`), &out) == nil {
 		t.Fatal("esperava recusa")
+	}
+}
+
+func TestFaseSummaryValidaRespostaESemCandidato(t *testing.T) {
+	m := domain.Mudanca{Arquivos: []domain.Arquivo{{Caminho: "a.go"}}}
+	r, err := helper(t, "summary").Summarize(context.Background(), m)
+	if err != nil || r.Resumo != "ok" || len(r.Arquivos) != 1 || r.Arquivos[0].Caminho != "a.go" || r.Origem != "" {
+		t.Fatalf("%+v %v", r, err)
+	}
+	if _, err := helper(t, "summary-ecoa-candidate").Summarize(context.Background(), m); err != nil {
+		t.Fatalf("requisição de summary carregou candidate: %v", err)
+	}
+}
+
+func TestFaseSummaryFalhaExplicitamente(t *testing.T) {
+	for _, mode := range []string{"summary-extra", "summary-desconhecido", "missing", "huge", "failure", "invalid"} {
+		t.Run(mode, func(t *testing.T) {
+			if _, err := helper(t, mode).Summarize(context.Background(), domain.Mudanca{}); err == nil {
+				t.Fatal("esperava falha")
+			}
+		})
+	}
+}
+
+func TestProvedorSemFaseSummaryContinuaAtendendoAsOutras(t *testing.T) {
+	r := helper(t, "sem-summary")
+	if _, err := r.Summarize(context.Background(), domain.Mudanca{}); err == nil {
+		t.Fatal("esperava falha da fase não suportada")
+	}
+	if a, err := r.Candidates(context.Background(), domain.Mudanca{}); err != nil || len(a) != 0 {
+		t.Fatalf("%v %v", a, err)
 	}
 }
