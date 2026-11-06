@@ -15,7 +15,11 @@ func text(v string) string {
 
 func Markdown(w io.Writer, r application.Relatorio) error {
 	var b strings.Builder
-	fmt.Fprintf(&b, "# Raposa\n\nBase: `%s`\n\nHead: `%s`\n\nModo: %s · duração: %d ms\n\n%d achado(s), %d candidato(s) descartado(s). Resultado informativo; ausência de achados não representa aprovação.\n", r.Mudanca.Base, r.Mudanca.Head, r.Modo, r.DuracaoMS, len(r.Achados), len(r.Descartados))
+	fmt.Fprintf(&b, "# Raposa\n\nBase: `%s`\n\nHead: `%s`\n\nModo: %s · duração: %d ms", r.Mudanca.Base, r.Mudanca.Head, r.Modo, r.DuracaoMS)
+	if r.PrazoProvedorMS > 0 {
+		fmt.Fprintf(&b, " · prazo por chamada: %d ms", r.PrazoProvedorMS)
+	}
+	fmt.Fprintf(&b, "\n\n%d achado(s), %d candidato(s) descartado(s). Resultado informativo; ausência de achados não representa aprovação.\n", len(r.Achados), len(r.Descartados))
 	for _, a := range r.Achados {
 		fmt.Fprintf(&b, "\n## [%s] %s\n\n%s:%d · confiança %.2f · ID %s\n\nCondição: %s\n\nImpacto: %s\n\nEsperado: %s\n\nVerificação: %s\n", a.Severidade, text(a.Titulo), text(a.Caminho), a.Linha, a.Confianca, a.ID, text(a.Condicao), text(a.Impacto), text(a.Esperado), text(a.Contraevidencia))
 		for _, e := range a.Evidencias {
